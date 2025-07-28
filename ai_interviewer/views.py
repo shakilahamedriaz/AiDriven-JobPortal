@@ -393,7 +393,7 @@ def interview_session(request, session_id):
         'total_questions': 5,
         'progress_percentage': (answered_questions.count() / 5) * 100
     }
-    return render(request, 'ai_interviewer/interview_session.html', context)
+    return render(request, 'ai_interviewer/interview_session_modern.html', context)
 
 @login_required
 def interview_results(request, session_id):
@@ -440,7 +440,7 @@ def interview_results(request, session_id):
 def user_interviews(request):
     """Display user's interview history"""
     sessions = InterviewSession.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'ai_interviewer/user_interviews.html', {'sessions': sessions})
+    return render(request, 'ai_interviewer/user_interviews_modern.html', {'sessions': sessions})
 
 @csrf_exempt
 def voice_answer(request):

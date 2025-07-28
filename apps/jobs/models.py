@@ -15,8 +15,10 @@ class Job(models.Model):
     company_name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     description = models.TextField()
+    requirements = models.TextField(blank=True, null=True, help_text="Job requirements and qualifications")
     posted_by = models.ForeignKey(Employer, on_delete=models.CASCADE)
     posted_at = models.DateTimeField(auto_now_add=True)
+    is_featured = models.BooleanField(default=False, help_text="Mark this job as featured to display it prominently")
 
     def __str__(self):
         return self.title

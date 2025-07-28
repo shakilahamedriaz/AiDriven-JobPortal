@@ -1,53 +1,173 @@
 {% extends 'base.html' %}
 
-{% block title %}AI Mock Interview Setup{% endblock %}
+{% block title %}AI Mock Interview Setup - JobPortal{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h1 class="text-2xl font-bold text-center mb-6">AI Mock Interview Setup</h1>
-        
-        <form method="post" class="space-y-4">
-            {% csrf_token %}
-            
-            <div>
-                <label for="{{ form.job_role.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ form.job_role.label }}
-                </label>
-                {{ form.job_role }}
+<div class="min-h-screen bg-gradient-to-br from-primary-600 via-purple-600 to-secondary-600 relative overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-white opacity-5 rounded-full mix-blend-multiply filter blur-3xl animate-float"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-300 opacity-10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-purple-500 to-pink-500 opacity-5 rounded-full filter blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 py-12">
+        <div class="max-w-lg mx-auto">
+            <!-- Header Section -->
+            <div class="text-center mb-10">
+                <div class="mx-auto w-24 h-24 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-3xl flex items-center justify-center mb-6 premium-shadow">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014.846 21H9.154a3.374 3.374 0 00-2.869-1.111l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-white mb-4">
+                    AI Mock Interview
+                </h1>
+                <p class="text-xl text-primary-100 max-w-md mx-auto">
+                    Practice with our AI-powered interview system and boost your confidence
+                </p>
             </div>
-            
-            <div>
-                <label for="{{ form.session_type.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ form.session_type.label }}
-                </label>
-                {{ form.session_type }}
+
+            <!-- Main Setup Card -->
+            <div class="glass-morphism rounded-3xl p-8 premium-shadow">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-2">
+                        Setup Your Interview
+                    </h2>
+                    <p class="text-primary-100">
+                        Choose your role and interview type to get started
+                    </p>
+                </div>
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Job Role Selection -->
+                    <div class="space-y-2">
+                        <label for="{{ form.job_role.id_for_label }}" class="block text-sm font-medium text-white mb-3">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6z"></path>
+                                </svg>
+                                <span>{{ form.job_role.label }}</span>
+                            </div>
+                        </label>
+                        <div class="relative">
+                            <select id="{{ form.job_role.id_for_label }}" 
+                                    name="{{ form.job_role.name }}"
+                                    required
+                                    class="w-full pl-4 pr-10 py-4 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-30 focus:border-white transition-all duration-300 appearance-none">
+                                <option value="" class="text-gray-700">Select a job role...</option>
+                                {% for value, label in form.job_role.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" class="text-gray-700">{{ label }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                <svg class="w-5 h-5 text-white text-opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Session Type Selection -->
+                    <div class="space-y-2">
+                        <label for="{{ form.session_type.id_for_label }}" class="block text-sm font-medium text-white mb-3">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>{{ form.session_type.label }}</span>
+                            </div>
+                        </label>
+                        <div class="relative">
+                            <select id="{{ form.session_type.id_for_label }}" 
+                                    name="{{ form.session_type.name }}"
+                                    required
+                                    class="w-full pl-4 pr-10 py-4 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl text-white focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-30 focus:border-white transition-all duration-300 appearance-none">
+                                <option value="" class="text-gray-700">Select interview type...</option>
+                                {% for value, label in form.session_type.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" class="text-gray-700">{{ label }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                <svg class="w-5 h-5 text-white text-opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Start Interview Button -->
+                    <div class="pt-4">
+                        <button type="submit" 
+                                class="group relative w-full flex justify-center py-4 px-6 border border-transparent text-lg font-bold rounded-xl text-primary-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-30 transition-all duration-300 hover:scale-105 premium-shadow">
+                            <span class="absolute left-0 inset-y-0 flex items-center pl-6">
+                                <svg class="h-6 w-6 text-primary-500 group-hover:text-primary-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10V9a3 3 0 113 3v1M9 10v5a2 2 0 002 2h2a2 2 0 002-2v-5"></path>
+                                </svg>
+                            </span>
+                            Start AI Interview
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Quick Links -->
+                <div class="mt-8 pt-6 border-t border-white border-opacity-20">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{% url 'ai_interviewer:user_interviews' %}" 
+                           class="flex-1 group flex items-center justify-center py-3 px-4 rounded-xl bg-white bg-opacity-10 text-white hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-30">
+                            <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            Interview History
+                        </a>
+                        <a href="{% url 'job_list' %}" 
+                           class="flex-1 group flex items-center justify-center py-3 px-4 rounded-xl bg-white bg-opacity-10 text-white hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-30">
+                            <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6z"></path>
+                            </svg>
+                            Browse Jobs
+                        </a>
+                    </div>
+                </div>
             </div>
-            
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Start Interview
-            </button>
-        </form>
-        
-        <div class="mt-6 text-center">
-            <a href="{% url 'ai_interviewer:user_interviews' %}" class="text-blue-500 hover:text-blue-700">
-                View Interview History
-            </a>
+
+            <!-- Features Info -->
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Real-time Feedback</h3>
+                    <p class="text-primary-100 text-sm">Get instant AI-powered feedback on your answers</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Performance Analytics</h3>
+                    <p class="text-primary-100 text-sm">Track your progress with detailed analytics</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 mx-auto bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Industry Standards</h3>
+                    <p class="text-primary-100 text-sm">Questions based on real industry requirements</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-<style>
-.form-control {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-}
-.form-control:focus {
-    outline: none;
-    ring: 2px;
-    ring-color: #3b82f6;
-}
-</style>
 {% endblock %}

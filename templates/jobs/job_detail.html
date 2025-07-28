@@ -1,26 +1,297 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-4xl mx-auto">
-    <div class="flex justify-between items-start mb-6">
-        <div>
-            <h1 class="text-4xl font-bold text-gray-800">{{ job.title }}</h1>
-            <p class="text-xl text-gray-600 mt-2">{{ job.company_name }} - <span class="text-gray-500">{{ job.location }}</span></p>
-        </div>
-        <span class="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-2 rounded-full">{{ job.employment_type|default:"Full-time" }}</span>
-    </div>
-    
-    <div class="border-t pt-6">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Job Description</h2>
-        <div class="prose max-w-none text-gray-700">
-            {{ job.description|linebreaks }}
-        </div>
-    </div>
+{% block title %}{{ jo                        {% if user.is_authenticated and not user.is_employer %}
+                            <a href="{% url 'apply_job' job.pk %}" 
+                               class="bg-white text-primary-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-lg text-center">
+                                Apply Now
+                            </a>
+                        {% endif %}e }} at {{ job.company_name }} - JobPortal{% endblock %}
 
-    <div class="mt-8 text-center">
-        <a href="{% url 'apply_job' job.pk %}" class="inline-block px-8 py-4 text-lg text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300">
-            Apply Now
-        </a>
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="container mx-auto px-6 py-12">
+        <!-- Job Header -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 mb-8">
+            <div class="bg-gradient-to-r from-primary-600 to-secondary-600 text-white p-8">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start space-x-6">
+                        <!-- Company Logo -->
+                        <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+                            {{ job.company_name|first|upper }}
+                        </div>
+                        
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                                {{ job.title }}
+                                {% if job.is_featured %}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-400 text-yellow-900 ml-3">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                        </svg>
+                                        Featured
+                                    </span>
+                                {% endif %}
+                            </h1>
+                            <h2 class="text-xl font-semibold mb-4 opacity-90">{{ job.company_name }}</h2>
+                            
+                            <div class="flex items-center space-x-6 text-white text-opacity-90">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    {{ job.location }}
+                                </div>
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Posted {{ job.posted_at|timesince }} ago
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col space-y-3">
+                        {% if user.is_authenticated and not user.is_employer %}
+                            <a href="{% url 'apply_job' job.pk %}" 
+                               class="bg-white text-primary-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-lg text-center">
+                                Apply Now
+                            </a>
+                        {% endif %}
+                        
+                        <button onclick="shareJob()" 
+                                class="bg-white bg-opacity-20 backdrop-blur-sm text-white px-6 py-2 rounded-xl font-semibold hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                            </svg>
+                            Share
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Stats -->
+            <div class="bg-gray-50 px-8 py-6 border-b border-gray-200">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">Full-time</div>
+                        <div class="text-sm text-gray-600">Employment Type</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-secondary-600">Remote</div>
+                        <div class="text-sm text-gray-600">Work Style</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600">Open</div>
+                        <div class="text-sm text-gray-600">Status</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-600">24</div>
+                        <div class="text-sm text-gray-600">Applicants</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Job Description -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Job Description
+                    </h3>
+                    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                        {{ job.description|linebreaksbr }}
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                {% if job.requirements %}
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                        </svg>
+                        Requirements
+                    </h3>
+                    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                        {{ job.requirements|linebreaksbr }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Skills & Qualifications -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        Skills & Technologies
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <!-- Sample skills - you can dynamically populate these -->
+                        <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 border border-primary-200">
+                            Python
+                        </span>
+                        <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 border border-primary-200">
+                            Django
+                        </span>
+                        <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 border border-primary-200">
+                            React
+                        </span>
+                        <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 border border-primary-200">
+                            JavaScript
+                        </span>
+                        <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 border border-primary-200">
+                            PostgreSQL
+                        </span>
+                        <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 border border-primary-200">
+                            AWS
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                <!-- Company Info -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-5 h-5 mr-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        About {{ job.company_name }}
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            Technology Company
+                        </div>
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM9 9a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            500+ Employees
+                        </div>
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            {{ job.location }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            A leading technology company focused on innovation and creating amazing products that change the world.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Apply Section -->
+                {% if user.is_authenticated and not user.is_employer %}
+                <div class="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-2xl shadow-xl p-8 border border-primary-200">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Ready to Apply?</h3>
+                    <p class="text-gray-600 mb-6">
+                        Join {{ job.company_name }} and be part of something amazing. Take the next step in your career journey.
+                    </p>
+                    <a href="{% url 'apply_job' job.pk %}" 
+                       class="block w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white text-center py-4 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all duration-300 mb-4">
+                        Apply for this Position
+                    </a>
+                    <a href="{% url 'ai_interviewer:start_interview' %}" 
+                       class="block w-full border-2 border-primary-600 text-primary-600 text-center py-3 rounded-xl font-semibold hover:bg-primary-600 hover:text-white transition-all duration-300">
+                        Practice Interview First
+                    </a>
+                </div>
+                {% elif user.is_employer %}
+                <div class="bg-yellow-50 rounded-2xl shadow-xl p-8 border border-yellow-200">
+                    <h3 class="text-xl font-bold text-yellow-800 mb-4">Employer Account</h3>
+                    <p class="text-yellow-700">
+                        You're logged in as an employer. Switch to an applicant account to apply for this position.
+                    </p>
+                </div>
+                {% else %}
+                <div class="bg-gray-50 rounded-2xl shadow-xl p-8 border border-gray-200">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Join to Apply</h3>
+                    <p class="text-gray-600 mb-6">
+                        Create an account or sign in to apply for this amazing opportunity.
+                    </p>
+                    <div class="space-y-3">
+                        <a href="{% url 'signup' %}" 
+                           class="block w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white text-center py-3 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300">
+                            Sign Up
+                        </a>
+                        <a href="{% url 'login' %}" 
+                           class="block w-full border-2 border-primary-600 text-primary-600 text-center py-3 rounded-xl font-semibold hover:bg-primary-600 hover:text-white transition-all duration-300">
+                            Sign In
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Similar Jobs -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-5 h-5 mr-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        Similar Jobs
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <a href="#" class="block p-4 rounded-xl border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-300">
+                            <h4 class="font-semibold text-gray-800 mb-1">Senior Developer</h4>
+                            <p class="text-sm text-gray-600">Tech Solutions Inc.</p>
+                            <p class="text-xs text-gray-500 mt-2">San Francisco, CA</p>
+                        </a>
+                        
+                        <a href="#" class="block p-4 rounded-xl border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-300">
+                            <h4 class="font-semibold text-gray-800 mb-1">Full Stack Engineer</h4>
+                            <p class="text-sm text-gray-600">Innovation Labs</p>
+                            <p class="text-xs text-gray-500 mt-2">Remote</p>
+                        </a>
+                        
+                        <a href="#" class="block p-4 rounded-xl border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-300">
+                            <h4 class="font-semibold text-gray-800 mb-1">Software Developer</h4>
+                            <p class="text-sm text-gray-600">StartupCo</p>
+                            <p class="text-xs text-gray-500 mt-2">New York, NY</p>
+                        </a>
+                    </div>
+                    
+                    <a href="{% url 'job_list' %}" class="block w-full text-center text-primary-600 font-semibold mt-6 py-2 rounded-xl border border-primary-200 hover:bg-primary-50 transition-all duration-300">
+                        View All Similar Jobs
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+function shareJob() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ job.title }} at {{ job.company_name }}',
+            text: 'Check out this amazing job opportunity!',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Job link copied to clipboard!');
+        });
+    }
+}
+</script>
 {% endblock %}
