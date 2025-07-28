@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold mb-8 text-gray-800">Applicants for {{ job.title }}</h2>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="text-left py-3 px-6 font-semibold text-gray-600">Applicant</th>
+                    <th class="text-left py-3 px-6 font-semibold text-gray-600">Email</th>
+                    <th class="text-left py-3 px-6 font-semibold text-gray-600">Applied On</th>
+                    <th class="text-center py-3 px-6 font-semibold text-gray-600">Resume</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                    <tr class="border-b hover:bg-gray-50 transition-colors duration-200">
+                        <td class="py-4 px-6">
+                            <div class="flex items-center">
+                                <img src="https://i.pravatar.cc/150?u={{ application.applicant.email }}" alt="Avatar" class="w-10 h-10 rounded-full mr-4">
+                                <span class="font-medium text-gray-800">{{ application.applicant.user.get_full_name|default:application.applicant.user.username }}</span>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 text-gray-600">{{ application.applicant.user.email }}</td>
+                        <td class="py-4 px-6 text-gray-600">{{ application.applied_at|date:"F d, Y" }}</td>
+                        <td class="py-4 px-6 text-center">
+                            <a href="{{ application.resume.url }}" class="inline-block px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300" target="_blank">
+                                View Resume
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-12">
+                            <p class="text-gray-500 text-lg">No applicants for this job yet.</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w-full max-w-6xl mx-auto">
+    <div class="bg-white p-8 rounded-xl shadow-lg mb-8">
+        <h3 class="text-2xl font-bold text-gray-800 mb-6">Find Your Perfect Job</h3>
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700">Job Title</label>
+                <input type="text" name="title" id="title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g. Software Engineer">
+            </div>
+            <div>
+                <label for="company" class="block text-sm font-medium text-gray-700">Company</label>
+                <input type="text" name="company" id="company" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g. Tech Solutions Inc.">
+            </div>
+            <div>
+                <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+                <input type="text" name="location" id="location" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g. New York">
+            </div>
+            <button type="submit" class="w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Search
+            </button>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <ul role="list" class="divide-y divide-gray-200">
+            {% for job in jobs %}
+            <li class="p-6 hover:bg-gray-50 transition-colors duration-200">
+                <a href="{% url 'job_detail' job.pk %}" class="block">
+                    <div class="flex justify-between items-center">
+                        <div class="flex-1">
+                            <p class="text-lg font-bold text-blue-600 truncate">{{ job.title }}</p>
+                            <p class="text-md text-gray-700">{{ job.company_name }}</p>
+                            <p class="text-sm text-gray-500 mt-1">{{ job.location }}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full">{{ job.employment_type|default:"Full-time" }}</span>
+                            <p class="text-xs text-gray-400 mt-2">Posted: {{ job.date_posted|timesince }} ago</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {% empty %}
+            <li class="p-12 text-center">
+                <p class="text-gray-500 text-lg">No jobs found matching your criteria.</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

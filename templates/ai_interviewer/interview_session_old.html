@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Interview{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4">AI Interview for {{ session.job_role }}</h1>
+    <p class="mb-4 text-lg">Session Type: {{ session.get_session_type_display }}</p>
+
+    <div id="interview-log" class="mb-6">
+        {% for qa in answered_questions %}
+            <div class="chat-message mb-4 p-4 border rounded-lg bg-gray-100">
+                <p class="font-semibold">Question {{ forloop.counter }}:</p>
+                <p>{{ qa.question_text }}</p>
+                <p class="mt-2"><strong>Your Answer:</strong> {{ qa.useranswer.answer_text }}</p>
+                <div class="mt-2 p-3 bg-blue-100 rounded">
+                    <p><strong>Feedback:</strong> {{ qa.useranswer.feedback }}</p>
+                    <p><strong>Rating:</strong> {{ qa.useranswer.rating }}/10</p>
+                    <p><strong>Improvements:</strong> {{ qa.useranswer.suggested_improvement }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if current_question %}
+        <div id="current-question-section" class="p-4 border-t">
+            <h2 class="text-2xl font-semibold mb-2">Question {{ question_number }}</h2>
+            <p id="question-text" class="text-lg">{{ current_question.question_text }}</p>
+            <button id="speak-question-btn" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Speak Question
+            </button>
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <input type="hidden" name="question_id" value="{{ current_question.id }}">
+                <textarea name="answer" id="answer-textarea" rows="10" class="w-full p-2 border rounded" placeholder="Your answer..."></textarea>
+                <div class="flex items-center mt-2">
+                    <button type="button" id="record-btn" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                        <span id="record-icon">🎤</span> Start Recording
+                    </button>
+                    <p id="recording-status" class="ml-4 text-gray-600"></p>
+                </div>
+                <button type="submit" class="mt-4 px-6 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Submit Answer</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="p-4 text-center">
+            <h2 class="text-2xl font-bold">Interview Complete!</h2>
+            <p class="mt-2">Well done! You have completed the interview session.</p>
+            <a href="/" class="mt-4 inline-block px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Back to Home</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const questionText = document.getElementById('question-text');
+        const speakQuestionBtn = document.getElementById('speak-question-btn');
+        const recordBtn = document.getElementById('record-btn');
+        const answerTextarea = document.getElementById('answer-textarea');
+        const recordingStatus = document.getElementById('recording-status');
+        const recordIcon = document.getElementById('record-icon');
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+                recordingStatus.textContent = 'Recording...';
+                recordIcon.textContent = '🛑';
+                recordBtn.classList.remove('bg-green-500');
+                recordBtn.classList.add('bg-red-500');
+                recordBtn.childNodes[1].nodeValue = ' Stop Recording';
+            };
+
+            recognition.onend = () => {
+                recordingStatus.textContent = '';
+                recordIcon.textContent = '🎤';
+                recordBtn.classList.remove('bg-red-500');
+                recordBtn.classList.add('bg-green-500');
+                recordBtn.childNodes[1].nodeValue = ' Start Recording';
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+                answerTextarea.value = finalTranscript + interimTranscript;
+            };
+
+            recordBtn.addEventListener('click', () => {
+                if (recognition && recognition.running) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            });
+
+        } else {
+            recordBtn.disabled = true;
+            recordingStatus.textContent = "Sorry, your browser doesn't support speech recognition.";
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                speechSynthesis.speak(utterance);
+            } else {
+                alert("Sorry, your browser doesn't support text-to-speech.");
+            }
+        }
+
+        if (speakQuestionBtn && questionText) {
+            speakQuestionBtn.addEventListener('click', () => {
+                speak(questionText.textContent);
+            });
+
+            // Automatically speak the question when the page loads
+            speak(questionText.textContent);
+        }
+    });
+</script>
+{% endblock %}

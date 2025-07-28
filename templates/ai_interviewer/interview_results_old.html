@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Interview Results{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h1 class="text-3xl font-bold text-center mb-4">Interview Complete!</h1>
+            <div class="text-center">
+                <div class="text-lg text-gray-600 mb-2">Position: <span class="font-medium">{{ session.get_job_role_display }}</span></div>
+                <div class="text-lg text-gray-600 mb-4">Session Type: <span class="font-medium">{{ session.get_session_type_display }}</span></div>
+                <div class="text-2xl font-bold text-blue-600">Overall Rating: {{ average_rating }}/10</div>
+            </div>
+        </div>
+
+        <!-- Performance Summary -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Performance Summary</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-600">{{ total_questions }}</div>
+                    <div class="text-sm text-gray-600">Questions Answered</div>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <div class="text-2xl font-bold text-green-600">{{ average_rating }}/10</div>
+                    <div class="text-sm text-gray-600">Average Rating</div>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <div class="text-2xl font-bold text-purple-600">
+                        {% if average_rating >= 8 %}Excellent
+                        {% elif average_rating >= 6 %}Good
+                        {% elif average_rating >= 4 %}Fair
+                        {% else %}Needs Improvement
+                        {% endif %}
+                    </div>
+                    <div class="text-sm text-gray-600">Performance Level</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Feedback -->
+        {% if session.overall_feedback %}
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Overall Interview Feedback</h2>
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                <p class="text-gray-800">{{ session.overall_feedback }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Detailed Results -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Detailed Feedback</h2>
+            
+            {% for question in answered_questions %}
+            <div class="border-b border-gray-200 pb-6 mb-6 last:border-b-0">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="text-lg font-medium">Question {{ forloop.counter }}</h3>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium
+                        {% if question.answer.rating >= 8 %}bg-green-100 text-green-800
+                        {% elif question.answer.rating >= 6 %}bg-yellow-100 text-yellow-800
+                        {% elif question.answer.rating >= 4 %}bg-orange-100 text-orange-800
+                        {% else %}bg-red-100 text-red-800
+                        {% endif %}">
+                        {{ question.answer.rating }}/10
+                    </span>
+                </div>
+                
+                <div class="space-y-3">
+                    <div>
+                        <strong class="text-gray-700">Question:</strong>
+                        <p class="text-gray-800 mt-1">{{ question.question_text }}</p>
+                    </div>
+                    
+                    <div>
+                        <strong class="text-gray-700">Your Answer:</strong>
+                        <p class="text-gray-800 mt-1 bg-gray-50 p-3 rounded">{{ question.answer.answer_text }}</p>
+                    </div>
+                    
+                    <div>
+                        <strong class="text-gray-700">AI Feedback:</strong>
+                        <p class="text-gray-800 mt-1">{{ question.answer.feedback }}</p>
+                    </div>
+                    
+                    {% if question.answer.suggested_improvement %}
+                    <div>
+                        <strong class="text-gray-700">Suggestions for Improvement:</strong>
+                        <p class="text-gray-800 mt-1 bg-blue-50 p-3 rounded border-l-4 border-blue-400">{{ question.answer.suggested_improvement }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center space-x-4">
+            <a href="{% url 'ai_interviewer:start_interview' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+                Take Another Interview
+            </a>
+            <a href="{% url 'ai_interviewer:user_interviews' %}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded">
+                View All Interviews
+            </a>
+            <a href="{% url 'home' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-read results summary
+window.addEventListener('load', function() {
+    if ('speechSynthesis' in window) {
+        const summary = `Interview complete! You answered {{ total_questions }} questions with an average rating of {{ average_rating }} out of 10.`;
+        const utterance = new SpeechSynthesisUtterance(summary);
+        utterance.rate = 0.8;
+        setTimeout(() => speechSynthesis.speak(utterance), 1000);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div x-data="{ open: false }" class="flex flex-col min-h-screen">
+        <nav class="bg-white shadow-md">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <a class="text-3xl font-bold text-blue-600" href="/">JobPortal</a>
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a class="text-gray-600 hover:text-blue-600 transition duration-300" href="{% url 'job_list' %}">Jobs</a>
+                        <a class="text-gray-600 hover:text-blue-600 transition duration-300" href="{% url 'ai_interviewer:start_interview' %}">🤖 AI Interview</a>
+                        {% if user.is_authenticated %}
+                            <span class="text-gray-800 font-semibold">Welcome, {{ user.username }}</span>
+                            {% if user.role == 'employer' %}
+                                <a class="text-gray-600 hover:text-blue-600 transition duration-300" href="{% url 'post_job' %}">Post Job</a>
+                                <a class="text-gray-600 hover:text-blue-600 transition duration-300" href="{% url 'employer_dashboard' %}">Dashboard</a>
+                            {% else %}
+                                <a class="text-gray-600 hover:text-blue-600 transition duration-300" href="{% url 'applicant_dashboard' %}">Dashboard</a>
+                            {% endif %}
+                            <form action="{% url 'logout' %}" method="post" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="text-gray-600 hover:text-blue-600 transition duration-300">Logout</button>
+                            </form>
+                        {% else %}
+                            <a class="text-gray-600 hover:text-blue-600 transition duration-300" href="{% url 'login' %}">Login</a>
+                            <a class="px-4 py-2 text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300" href="{% url 'signup' %}">Sign Up</a>
+                        {% endif %}
+                    </div>
+                    <div class="md:hidden">
+                        <button @click="open = !open" class="text-gray-600 hover:text-blue-600 focus:outline-none">
+                            <svg class="h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div x-show="open" class="md:hidden bg-white">
+                <a class="block px-6 py-3 text-gray-600 hover:bg-gray-100" href="{% url 'job_list' %}">Jobs</a>
+                <a class="block px-6 py-3 text-gray-600 hover:bg-gray-100" href="{% url 'ai_interviewer:start_interview' %}">🤖 AI Interview</a>
+                {% if user.is_authenticated %}
+                    <span class="block px-6 py-3 text-gray-800 font-semibold">Welcome, {{ user.username }}</span>
+                    {% if user.role == 'employer' %}
+                        <a class="block px-6 py-3 text-gray-600 hover:bg-gray-100" href="{% url 'post_job' %}">Post Job</a>
+                        <a class="block px-6 py-3 text-gray-600 hover:bg-gray-100" href="{% url 'employer_dashboard' %}">Dashboard</a>
+                    {% else %}
+                        <a class="block px-6 py-3 text-gray-600 hover:bg-gray-100" href="{% url 'applicant_dashboard' %}">Dashboard</a>
+                    {% endif %}
+                    <form action="{% url 'logout' %}" method="post" class="block">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full text-left px-6 py-3 text-gray-600 hover:bg-gray-100">Logout</button>
+                    </form>
+                {% else %}
+                    <a class="block px-6 py-3 text-gray-600 hover:bg-gray-100" href="{% url 'login' %}">Login</a>
+                    <a class="block px-6 py-3 text-gray-600 hover:bg-gray-100" href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <main class="flex-grow">
+            <div class="container mx-auto px-6 py-12">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
+
+        <footer class="bg-gray-800 text-white">
+            <div class="container mx-auto px-6 py-10">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">JobPortal</h3>
+                        <p class="text-gray-400">Your one-stop solution for finding the best talent and the right job.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-blue-400 transition duration-300">About Us</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition duration-300">Contact</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition duration-300">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Connect With Us</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M22.46,6C21.69,6.35 20.86,6.58 20,6.69C20.88,6.16 21.56,5.32 21.88,4.31C21.05,4.81 20.13,5.16 19.16,5.36C18.37,4.5 17.26,4 16,4C13.65,4 11.75,5.9 11.75,8.25C11.75,8.58 11.79,8.92 11.86,9.24C8.28,9.06 5.1,7.38 3,4.79C2.63,5.42 2.42,6.16 2.42,6.94C2.42,8.43 3.17,9.75 4.33,10.5C3.62,10.48 2.96,10.28 2.38,9.98C2.38,10 2.38,10 2.38,10.03C2.38,12.11 3.86,13.85 5.82,14.24C5.46,14.34 5.08,14.39 4.69,14.39C4.42,14.39 4.15,14.36 3.89,14.31C4.45,16.02 6.13,17.26 8.1,17.29C6.63,18.45 4.76,19.18 2.75,19.18C2.42,19.18 2.09,19.16 1.77,19.12C3.78,20.39 6.17,21.14 8.75,21.14C16,21.14 20.33,15.33 20.33,10.03C20.33,9.84 20.33,9.65 20.32,9.46C21.1,8.88 21.83,8.19 22.46,7.36V6Z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12,2A10,10 0 0,0 2,12C2,16.42 5.58,20 10,20C10.74,20 11.45,19.92 12.13,19.75C12.05,19.5 12,19.25 12,19C12,16.79 13.79,15 16,15C18.21,15 20,16.79 20,19C20,19.25 19.95,19.5 19.88,19.75C20.55,19.92 21.26,20 22,20C22,15.58 18.42,12 14,12C13.26,12 12.55,12.08 11.88,12.25C11.95,12.5 12,12.75 12,13C12,15.21 10.21,17 8,17C5.79,17 4,15.21 4,13C4,12.75 4.05,12.5 4.13,12.25C3.45,12.08 2.74,12 2,12C2,7.58 5.58,4 10,4C10.74,4 11.45,4.08 12.13,4.25C12.05,4.5 12,4.75 12,5C12,7.21 13.79,9 16,9C18.21,9 20,7.21 20,5C20,4.75 19.95,4.5 19.88,4.25C20.55,4.08 21.26,4 22,4A10,10 0 0,0 12,2Z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 border-t border-gray-700 pt-6 text-center text-gray-400">
+                    <p>&copy; 2025 JobPortal. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Interview History{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Your Interview History</h1>
+            <a href="{% url 'ai_interviewer:start_interview' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                New Interview
+            </a>
+        </div>
+
+        {% if sessions %}
+        <div class="grid gap-6">
+            {% for session in sessions %}
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-xl font-semibold">{{ session.get_job_role_display }}</h3>
+                        <p class="text-gray-600">{{ session.get_session_type_display }}</p>
+                        <p class="text-sm text-gray-500">{{ session.created_at|date:"M j, Y g:i A" }}</p>
+                    </div>
+                    <div class="text-right">
+                        {% if session.completed_at %}
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Completed</span>
+                        {% else %}
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">In Progress</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="text-center p-3 bg-gray-50 rounded">
+                        <div class="text-lg font-bold">{{ session.questions.count }}</div>
+                        <div class="text-xs text-gray-600">Questions</div>
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded">
+                        {% with answered_count=session.questions.count %}
+                        <div class="text-lg font-bold">{{ answered_count }}</div>
+                        <div class="text-xs text-gray-600">Answered</div>
+                        {% endwith %}
+                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded">
+                        <div class="text-lg font-bold">N/A</div>
+                        <div class="text-xs text-gray-600">Avg Score</div>
+                                    </div>
+                    <div class="text-center p-3 bg-gray-50 rounded">
+                        {% if session.completed_at %}
+                            <div class="text-lg font-bold text-green-600">✓</div>
+                            <div class="text-xs text-gray-600">Complete</div>
+                        {% else %}
+                            <div class="text-lg font-bold text-yellow-600">•••</div>
+                            <div class="text-xs text-gray-600">Pending</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex space-x-2">
+                    {% if session.completed_at %}
+                        <a href="{% url 'ai_interviewer:interview_results' session.id %}" class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm">
+                            View Results
+                        </a>
+                    {% else %}
+                        <a href="{% url 'ai_interviewer:interview_session' session.id %}" class="bg-green-500 hover:bg-green-700 text-white py-1 px-3 rounded text-sm">
+                            Continue Interview
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination could be added here if needed -->
+        
+        {% else %}
+        <div class="text-center py-12">
+            <div class="text-gray-500 text-lg mb-4">You haven't taken any interviews yet.</div>
+            <a href="{% url 'ai_interviewer:start_interview' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+                Start Your First Interview
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

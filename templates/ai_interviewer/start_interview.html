@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Mock Interview Setup{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold text-center mb-6">AI Mock Interview Setup</h1>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div>
+                <label for="{{ form.job_role.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.job_role.label }}
+                </label>
+                {{ form.job_role }}
+            </div>
+            
+            <div>
+                <label for="{{ form.session_type.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.session_type.label }}
+                </label>
+                {{ form.session_type }}
+            </div>
+            
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Start Interview
+            </button>
+        </form>
+        
+        <div class="mt-6 text-center">
+            <a href="{% url 'ai_interviewer:user_interviews' %}" class="text-blue-500 hover:text-blue-700">
+                View Interview History
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+}
+.form-control:focus {
+    outline: none;
+    ring: 2px;
+    ring-color: #3b82f6;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interview Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { background: #f0f0f0; padding: 20px; margin-bottom: 20px; }
+        .result-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+        .score { font-size: 24px; font-weight: bold; color: #4CAF50; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Interview Completed!</h1>
+            <h2>{{ session.job_role }} Interview Results</h2>
+            <p>Session Type: {{ session.get_session_type_display }}</p>
+            {% if session.completed_at %}
+                <p>Completed: {{ session.completed_at|date:"M d, Y g:i A" }}</p>
+            {% endif %}
+        </div>
+
+        <div class="result-card">
+            <h3>📊 Overall Performance</h3>
+            <div class="score">Average Score: {{ average_rating }}/10</div>
+            <p>Total Questions Answered: {{ total_questions }}</p>
+            <p>Strong Answers (7+): {{ strong_answers }}</p>
+            <p>Needs Improvement (<5): {{ weak_answers }}</p>
+        </div>
+
+        {% if session.overall_feedback %}
+        <div class="result-card">
+            <h3>💬 Overall Feedback</h3>
+            <p>{{ session.overall_feedback }}</p>
+        </div>
+        {% endif %}
+
+        <div class="result-card">
+            <h3>📝 Question-by-Question Review</h3>
+            {% for question in answered_questions %}
+                <div style="border-left: 3px solid #4CAF50; padding-left: 10px; margin: 10px 0;">
+                    <h4>Question {{ forloop.counter }}</h4>
+                    <p><strong>Q:</strong> {{ question.question_text }}</p>
+                    <p><strong>Your Answer:</strong> {{ question.answer.answer_text|truncatewords:20 }}</p>
+                    <p><strong>Score:</strong> {{ question.answer.rating }}/10</p>
+                    <p><strong>Feedback:</strong> {{ question.answer.feedback }}</p>
+                    {% if question.answer.strengths %}
+                        <p><strong>Strengths:</strong> {{ question.answer.strengths }}</p>
+                    {% endif %}
+                    {% if question.answer.suggested_improvement %}
+                        <p><strong>Suggestions:</strong> {{ question.answer.suggested_improvement }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="result-card">
+            <h3>🚀 Next Steps</h3>
+            <p><a href="{% url 'ai_interviewer:start_interview' %}">Take Another Interview</a></p>
+            <p><a href="{% url 'ai_interviewer:user_interviews' %}">View All My Interviews</a></p>
+            <p><a href="/">Return to Home</a></p>
+        </div>
+    </div>
+</body>
+</html>
