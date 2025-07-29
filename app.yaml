@@ -1,0 +1,27 @@
+runtime: python312
+
+env: standard
+
+service: default
+
+# Scaling configuration
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.6
+
+# Environment variables
+env_variables:
+  DJANGO_SETTINGS_MODULE: "job_portal.settings"
+  PYTHONPATH: "/app"
+
+# Static files
+handlers:
+- url: /static
+  static_dir: staticfiles
+
+- url: /media
+  static_dir: media
+
+- url: /.*
+  script: auto

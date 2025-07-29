@@ -1,2 +1,98 @@
+# Core Django Framework
 Django==5.2.4
-groq==0.4.1
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# AI/ML Libraries for Interview Features
+groq==0.9.0
+
+# File Handling and Media Processing
+Pillow==10.4.0
+
+# HTTP Requests
+requests==2.31.0
+
+# Database (SQLite is included with Python)
+# For PostgreSQL in production, add: psycopg2==2.9.7
+# For MySQL in production, add: mysqlclient==2.2.0
+
+# Security and Authentication
+django-crispy-forms==2.1
+crispy-bootstrap5==2024.2
+
+# Static Files and Asset Management
+whitenoise==6.6.0
+
+# Development Tools
+django-debug-toolbar==4.2.0
+
+# Date and Time Utilities
+python-dateutil==2.8.2
+
+# JSON and Data Processing
+python-json-logger==2.0.7
+
+# Django Extensions
+django-extensions==3.2.3
+
+# Form Handling
+django-widget-tweaks==1.5.0
+
+# File Upload Validation
+django-cleanup==8.0.0
+
+# API Framework (if you plan to add REST APIs)
+djangorestframework==3.14.0
+
+# CORS Headers (for frontend-backend separation)
+django-cors-headers==4.3.1
+
+# Timezone Support
+pytz==2023.3
+
+# Text Processing and AI
+nltk==3.8.1
+textblob==0.17.1
+
+# PDF Processing (for resume parsing)
+PyPDF2==3.0.1
+pdfplumber==0.10.0
+
+# Excel File Processing
+openpyxl==3.1.2
+xlrd==2.0.1
+
+# Email Backend
+django-anymail==10.2
+
+# Caching (Redis)
+redis==5.0.1
+django-redis==5.4.0
+
+# Search Functionality
+django-haystack==3.2.1
+
+# Pagination
+django-pure-pagination==0.3.0
+
+# Social Authentication (optional)
+social-auth-app-django==5.4.0
+
+# Markdown Support
+markdown==3.5.1
+
+# Logging
+colorlog==6.7.0
+
+# Production Server
+gunicorn==21.2.0
+
+# Environment Management
+django-environ==0.11.2
+
+# Task Queue (for background jobs)
+celery==5.3.4
+
+# Monitoring and Error Tracking
+sentry-sdk==1.38.0
