@@ -1,0 +1,541 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Interview - {{ session.job_role }} - JobPortal{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500 opacity-10 rounded-full mix-blend-multiply filter blur-3xl animate-float"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary-500 opacity-10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-blue-500 to-purple-500 opacity-5 rounded-full filter blur-3xl"></div>
+    </div>
+
+    <!-- Progress Header -->
+    <div class="relative z-10 glass-morphism border-b border-white border-opacity-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014.846 21H9.154a3.374 3.374 0 00-2.869-1.111l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">AI Mock Interview</h1>
+                        <p class="text-primary-200">{{ session.job_role }} • {{ session.get_session_type_display }}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-primary-200 mb-2">Question {{ question_number }} of {{ total_questions }}</div>
+                    <div class="w-48 bg-white bg-opacity-20 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-3 rounded-full transition-all duration-500" style="width: {{ progress_percentage }}%"></div>
+                    </div>
+                    <div class="text-xs text-primary-300 mt-1">{{ progress_percentage }}% Complete</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            <!-- Main Interview Panel -->
+            <div class="lg:col-span-3">
+                {% if current_question %}
+                    <div class="glass-morphism rounded-3xl p-8 premium-shadow">
+                        <!-- Question Header -->
+                        <div class="flex items-center justify-between mb-8">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-white">Question {{ question_number }}</h2>
+                                    <p class="text-primary-200">{{ session.session_type|title }} Interview Question</p>
+                                </div>
+                            </div>
+                            <button id="speak-question-btn" class="group flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 rounded-2xl text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-purple-400">
+                                <svg class="w-7 h-7 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                                </svg>
+                                <span id="speak-btn-text" class="font-bold text-lg">🔊 Read Aloud</span>
+                            </button>
+                        </div>
+
+                        <!-- Question Text -->
+                        <div class="mb-8">
+                            <div class="bg-gradient-to-r from-primary-500 to-secondary-500 bg-opacity-20 border-l-4 border-primary-400 p-6 rounded-r-2xl">
+                                <p id="question-text" class="text-white text-xl leading-relaxed">{{ current_question.question_text }}</p>
+                            </div>
+                        </div>
+
+                        <!-- AI Suggestions -->
+                        {% if current_question.ai_hint %}
+                        <div class="mb-8">
+                            <div class="bg-gradient-to-r from-yellow-500 to-orange-500 bg-opacity-20 border border-yellow-400 border-opacity-30 rounded-2xl p-6">
+                                <div class="flex items-start space-x-4">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014.846 21H9.154a3.374 3.374 0 00-2.869-1.111l-.548-.547z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-yellow-300 mb-2">💡 AI Suggestion</h3>
+                                        <p class="text-yellow-100">{{ current_question.ai_hint }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Answer Form -->
+                        <form method="post" class="space-y-6">
+                            {% csrf_token %}
+                            <input type="hidden" name="question_id" value="{{ current_question.id }}">
+                            
+                            <div>
+                                <label for="answer-textarea" class="block text-lg font-medium text-white mb-4">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-6 h-6 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                        <span>Your Answer</span>
+                                    </div>
+                                </label>
+                                <textarea name="answer" id="answer-textarea" rows="10" 
+                                    class="w-full px-6 py-4 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-2xl text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-30 focus:border-white transition-all duration-300 text-lg leading-relaxed resize-none" 
+                                    placeholder="Share your thoughts here... Be specific, provide examples, and structure your response clearly."></textarea>
+                            </div>
+
+                            <!-- Voice Recording Section -->
+                            <div class="bg-white bg-opacity-10 border border-white border-opacity-20 rounded-2xl p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center space-x-4">
+                                        <button type="button" id="record-btn" class="group flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-red-600 to-pink-700 hover:from-red-700 hover:to-pink-800 rounded-2xl text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-red-400">
+                                            <svg class="w-7 h-7 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+                                            </svg>
+                                            <span id="record-text" class="font-bold text-lg">🎤 Start Recording</span>
+                                        </button>
+                                        <button type="button" id="clear-text-btn" class="group flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 rounded-2xl text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-orange-400">
+                                            <svg class="w-7 h-7 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                            </svg>
+                                            <span class="font-bold text-lg">🗑️ Clear Answer</span>
+                                        </button>
+                                    </div>
+                                    <div class="text-sm text-primary-200">
+                                        🎯 Speak clearly for accurate transcription
+                                    </div>
+                                </div>
+                                <div id="recording-status" class="text-center text-primary-300 font-medium"></div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="flex justify-end pt-6">
+                                <button type="submit" class="group flex items-center space-x-3 px-12 py-5 bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 rounded-2xl text-white text-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-emerald-400">
+                                    <svg class="w-7 h-7 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                    </svg>
+                                    <span class="font-bold">📤 Submit Answer</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                {% else %}
+                    <!-- Interview Completion -->
+                    <div class="glass-morphism rounded-3xl p-12 text-center premium-shadow">
+                        <div class="mx-auto w-24 h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl flex items-center justify-center mb-8">
+                            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-4xl font-bold text-white mb-4">🎉 Interview Completed!</h2>
+                        <p class="text-xl text-primary-200 mb-10 max-w-md mx-auto">Congratulations! You've successfully completed your AI mock interview. Great job!</p>
+                        <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                            <a href="{% url 'ai_interviewer:interview_results' session.id %}" 
+                               class="group flex items-center space-x-3 px-12 py-5 bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 rounded-2xl text-white text-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-cyan-400">
+                                <svg class="w-7 h-7 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                                </svg>
+                                <span class="font-bold">📈 View Results</span>
+                            </a>
+                            <a href="{% url 'ai_interviewer:start_interview' %}" 
+                               class="group flex items-center space-x-3 px-12 py-5 bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 rounded-2xl text-white text-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-indigo-400">
+                                <svg class="w-7 h-7 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                </svg>
+                                <span class="font-bold">🆕 New Interview</span>
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Progress Card -->
+                <div class="glass-morphism rounded-2xl p-6 premium-shadow">
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <span>Progress</span>
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        {% for i in "12345"|make_list %}
+                            {% with step_number=forloop.counter %}
+                                <div class="flex items-center space-x-3">
+                                    {% if step_number <= question_number %}
+                                        {% if step_number < question_number %}
+                                            <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="text-green-300 font-medium">Question {{ step_number }}</span>
+                                        {% else %}
+                                            <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center animate-pulse">
+                                                <span class="text-white text-sm font-bold">{{ step_number }}</span>
+                                            </div>
+                                            <span class="text-white font-bold">Question {{ step_number }} (Current)</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="w-8 h-8 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                                            <span class="text-white text-opacity-60 text-sm">{{ step_number }}</span>
+                                        </div>
+                                        <span class="text-white text-opacity-60">Question {{ step_number }}</span>
+                                    {% endif %}
+                                </div>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Tips Card -->
+                <div class="glass-morphism rounded-2xl p-6 premium-shadow">
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014.846 21H9.154a3.374 3.374 0 00-2.869-1.111l-.548-.547z"></path>
+                        </svg>
+                        <span>Pro Tips</span>
+                    </h3>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex-shrink-0 flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs font-bold">1</span>
+                            </div>
+                            <p class="text-primary-200">Use the STAR method: Situation, Task, Action, Result</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex-shrink-0 flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs font-bold">2</span>
+                            </div>
+                            <p class="text-primary-200">Provide specific examples from your experience</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex-shrink-0 flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs font-bold">3</span>
+                            </div>
+                            <p class="text-primary-200">Take your time to think before answering</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex-shrink-0 flex items-center justify-center mt-0.5">
+                                <span class="text-white text-xs font-bold">4</span>
+                            </div>
+                            <p class="text-primary-200">Be confident and speak clearly</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Info -->
+                <div class="glass-morphism rounded-2xl p-6 premium-shadow">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Session Info</span>
+                    </h3>
+                    <div class="space-y-3 text-sm text-primary-200">
+                        <div class="flex justify-between">
+                            <span>Role:</span>
+                            <span class="font-semibold text-white">{{ session.job_role }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Type:</span>
+                            <span class="font-semibold text-white">{{ session.get_session_type_display }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Progress:</span>
+                            <span class="font-semibold text-white">{{ progress_percentage }}%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Remaining:</span>
+                            <span class="font-semibold text-white">{{ remaining_questions }} questions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Voice Recording and Text-to-Speech -->
+<script>
+let recognition = null;
+let isRecording = false;
+let isSpeaking = false;
+
+// Initialize speech recognition if available
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+}
+
+// Voice recording functionality
+document.getElementById('record-btn')?.addEventListener('click', function() {
+    if (!recognition) {
+        alert('Speech recognition is not supported in your browser.');
+        return;
+    }
+
+    if (isRecording) {
+        recognition.stop();
+        isRecording = false;
+        document.getElementById('record-text').textContent = '🎤 Start Recording';
+        document.getElementById('recording-status').textContent = '';
+        this.classList.remove('from-green-600', 'to-emerald-700', 'border-green-400');
+        this.classList.add('from-red-600', 'to-pink-700', 'border-red-400');
+    } else {
+        recognition.start();
+        isRecording = true;
+        document.getElementById('record-text').textContent = '⏹️ Stop Recording';
+        document.getElementById('recording-status').textContent = '🎙️ Listening...';
+        this.classList.remove('from-red-600', 'to-pink-700', 'border-red-400');
+        this.classList.add('from-green-600', 'to-emerald-700', 'border-green-400');
+    }
+});
+
+// Handle speech recognition results
+if (recognition) {
+    recognition.onresult = function(event) {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+        }
+        document.getElementById('answer-textarea').value = transcript;
+    };
+
+    recognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        document.getElementById('recording-status').textContent = '❌ Recognition error: ' + event.error;
+        isRecording = false;
+        document.getElementById('record-text').textContent = '🎤 Start Recording';
+        document.getElementById('record-btn').classList.remove('from-green-600', 'to-emerald-700', 'border-green-400');
+        document.getElementById('record-btn').classList.add('from-red-600', 'to-pink-700', 'border-red-400');
+    };
+
+    recognition.onend = function() {
+        isRecording = false;
+        document.getElementById('record-text').textContent = '🎤 Start Recording';
+        document.getElementById('recording-status').textContent = '';
+        document.getElementById('record-btn').classList.remove('from-green-600', 'to-emerald-700', 'border-green-400');
+        document.getElementById('record-btn').classList.add('from-red-600', 'to-pink-700', 'border-red-400');
+    };
+}
+
+// Clear text functionality
+document.getElementById('clear-text-btn')?.addEventListener('click', function() {
+    document.getElementById('answer-textarea').value = '';
+});
+
+// Text-to-speech for questions - COMPLETELY FIXED Start/Stop functionality
+let currentUtterance = null;
+let speechTimeoutId = null;
+
+function resetSpeechButton() {
+    const speakBtnText = document.getElementById('speak-btn-text');
+    const button = document.getElementById('speak-question-btn');
+    
+    console.log('Resetting speech button to Read Aloud state');
+    
+    if (speakBtnText && button) {
+        isSpeaking = false;
+        speakBtnText.textContent = '🔊 Read Aloud';
+        button.classList.remove('from-red-600', 'to-red-700', 'border-red-400');
+        button.classList.add('from-purple-600', 'to-indigo-700', 'border-purple-400');
+    }
+    
+    // Clear any pending timeout
+    if (speechTimeoutId) {
+        clearTimeout(speechTimeoutId);
+        speechTimeoutId = null;
+    }
+}
+
+function setSpeechButton() {
+    const speakBtnText = document.getElementById('speak-btn-text');
+    const button = document.getElementById('speak-question-btn');
+    
+    console.log('Setting speech button to Stop Reading state');
+    
+    if (speakBtnText && button) {
+        isSpeaking = true;
+        speakBtnText.textContent = '⏹️ Stop Reading';
+        button.classList.remove('from-purple-600', 'to-indigo-700', 'border-purple-400');
+        button.classList.add('from-red-600', 'to-red-700', 'border-red-400');
+    }
+}
+
+function stopSpeech() {
+    console.log('Stopping speech...');
+    
+    // Cancel speech synthesis
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+        speechSynthesis.cancel();
+    }
+    
+    // Clear current utterance
+    if (currentUtterance) {
+        currentUtterance = null;
+    }
+    
+    // Reset button state
+    resetSpeechButton();
+    
+    // Force reset after a short delay to ensure it works
+    setTimeout(() => {
+        if (isSpeaking) {
+            console.log('Force resetting speech button');
+            resetSpeechButton();
+        }
+    }, 100);
+}
+
+document.getElementById('speak-question-btn')?.addEventListener('click', function() {
+    console.log('Read Aloud button clicked! isSpeaking:', isSpeaking, 'speechSynthesis.speaking:', speechSynthesis.speaking);
+    
+    if (!('speechSynthesis' in window)) {
+        alert('Text-to-speech is not supported in your browser.');
+        return;
+    }
+    
+    if (isSpeaking || speechSynthesis.speaking) {
+        // Stop current speech
+        stopSpeech();
+    } else {
+        // Start speech
+        console.log('Starting speech...');
+        
+        // Make sure everything is stopped first
+        stopSpeech();
+        
+        const questionText = document.getElementById('question-text')?.textContent || '';
+        
+        if (questionText.trim()) {
+            // Wait a moment for the cancel to take effect
+            setTimeout(() => {
+                currentUtterance = new SpeechSynthesisUtterance(questionText.trim());
+                currentUtterance.rate = 0.8;
+                currentUtterance.pitch = 1;
+                currentUtterance.volume = 1;
+                currentUtterance.lang = 'en-US';
+                
+                // Set speaking state immediately
+                setSpeechButton();
+                
+                currentUtterance.onstart = function() {
+                    console.log('Speech started');
+                    setSpeechButton();
+                };
+                
+                currentUtterance.onend = function() {
+                    console.log('Speech ended naturally');
+                    currentUtterance = null;
+                    resetSpeechButton();
+                };
+                
+                currentUtterance.onerror = function(e) {
+                    console.log('Speech error:', e);
+                    currentUtterance = null;
+                    resetSpeechButton();
+                };
+                
+                // Start speaking
+                try {
+                    speechSynthesis.speak(currentUtterance);
+                    console.log('Speech synthesis started');
+                } catch (error) {
+                    console.log('Error starting speech:', error);
+                    resetSpeechButton();
+                }
+                
+                // Backup check to ensure state is correct
+                speechTimeoutId = setTimeout(() => {
+                    if (isSpeaking && !speechSynthesis.speaking && !speechSynthesis.pending) {
+                        console.log('Speech ended - backup check');
+                        currentUtterance = null;
+                        resetSpeechButton();
+                    }
+                }, 2000);
+                
+            }, 50); // Small delay to ensure cancel takes effect
+        }
+    }
+});
+
+// Form submission handler to clear textarea after submission
+document.querySelector('form')?.addEventListener('submit', function(e) {
+    // Stop any ongoing speech immediately
+    if (isSpeaking || speechSynthesis.speaking) {
+        stopSpeech();
+    }
+    
+    // Stop any recording
+    if (isRecording && recognition) {
+        recognition.stop();
+        isRecording = false;
+        const recordText = document.getElementById('record-text');
+        const recordBtn = document.getElementById('record-btn');
+        const recordingStatus = document.getElementById('recording-status');
+        if (recordText && recordBtn && recordingStatus) {
+            recordText.textContent = '🎤 Start Recording';
+            recordingStatus.textContent = '';
+            recordBtn.classList.remove('from-green-600', 'to-emerald-700', 'border-green-400');
+            recordBtn.classList.add('from-red-600', 'to-pink-700', 'border-red-400');
+        }
+    }
+    
+    // Clear the textarea after a small delay
+    setTimeout(() => {
+        if (document.getElementById('answer-textarea')) {
+            document.getElementById('answer-textarea').value = '';
+        }
+    }, 100);
+});
+
+// Additional safeguard - reset speech when page visibility changes
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden && isSpeaking) {
+        stopSpeech();
+    }
+});
+
+// Reset speech when navigating away
+window.addEventListener('beforeunload', function() {
+    if (isSpeaking) {
+        stopSpeech();
+    }
+});
+</script>
+{% endblock %}

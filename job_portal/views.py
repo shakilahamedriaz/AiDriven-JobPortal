@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from apps.jobs.models import Job
 
 def home(request):
@@ -16,7 +15,3 @@ def home(request):
         'featured_count': featured_jobs.count()
     }
     return render(request, 'home.html', context)
-
-def health_check(request):
-    """Health check endpoint for Google Cloud"""
-    return HttpResponse("OK", status=200)

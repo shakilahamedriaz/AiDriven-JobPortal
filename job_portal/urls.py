@@ -18,15 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home, health_check
+from .views import home
 
 urlpatterns = [
     path('', home, name='home'),
-    path('health/', health_check, name='health_check'),
     path('interviewer/', include('ai_interviewer.urls')),
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/', include('apps.users.urls')),
+    path('accounts/', include('apps.users.urls')),  # Our custom views first
+    path('accounts/', include('django.contrib.auth.urls')),  # Django's built-in views second
     path('jobs/', include('apps.jobs.urls')),
     path('applicants/', include('apps.applicants.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

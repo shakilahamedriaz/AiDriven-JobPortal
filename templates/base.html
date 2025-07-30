@@ -112,7 +112,7 @@
                     <!-- Logo -->
                     <a class="text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300" 
                        href="/">
-                        ✨ JobPortal
+                        ✨ AIpply
                     </a>
                     
                     <!-- Desktop Navigation -->
@@ -133,39 +133,61 @@
                             📊 Interview History
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
                         </a>
-                        {% endif %}
-                        
-                        {% if user.is_authenticated %}
-                            <div class="flex items-center space-x-4">
-                                <span class="text-gray-800 font-semibold px-3 py-1 bg-white bg-opacity-50 rounded-full">
-                                    Welcome, {{ user.username }}
-                                </span>
-                                {% if user.role == 'employer' %}
-                                    <a class="text-gray-700 hover:text-primary-600 transition duration-300 font-medium" 
-                                       href="{% url 'post_job' %}">Post Job</a>
-                                    <a class="text-gray-700 hover:text-primary-600 transition duration-300 font-medium" 
-                                       href="{% url 'employer_dashboard' %}">Dashboard</a>
-                                {% else %}
-                                    <a class="text-gray-700 hover:text-primary-600 transition duration-300 font-medium" 
-                                       href="{% url 'applicant_dashboard' %}">Dashboard</a>
-                                {% endif %}
-                                <form action="{% url 'logout' %}" method="post" class="inline">
-                                    {% csrf_token %}
-                                    <button type="submit" 
-                                            class="text-gray-700 hover:text-red-500 transition duration-300 font-medium">
-                                        Logout
-                                    </button>
-                                </form>
-                            </div>
+                        {% if user.role == 'employer' %}
+                            <a class="text-gray-700 hover:text-primary-600 transition duration-300 font-medium relative group" 
+                               href="{% url 'post_job' %}">
+                                Post Job
+                                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
+                            </a>
+                            <a class="text-gray-700 hover:text-primary-600 transition duration-300 font-medium relative group" 
+                               href="{% url 'employer_dashboard' %}">
+                                Dashboard
+                                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
+                            </a>
                         {% else %}
-                            <div class="flex items-center space-x-4">
-                                <a class="text-gray-700 hover:text-primary-600 transition duration-300 font-medium" 
-                                   href="{% url 'login' %}">Login</a>
-                                <a class="px-6 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300 font-medium" 
-                                   href="{% url 'signup' %}">Sign Up</a>
-                            </div>
+                            <a class="text-gray-700 hover:text-primary-600 transition duration-300 font-medium relative group" 
+                               href="{% url 'applicant_dashboard' %}">
+                                Dashboard
+                                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
+                            </a>
+                        {% endif %}
+                        {% else %}
+                            <!-- Login/Signup for non-authenticated users in main navigation -->
+                            <a class="text-gray-700 hover:text-primary-600 transition duration-300 font-medium relative group" 
+                               href="{% url 'login' %}">
+                                Login
+                                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-600 transition-all duration-300 group-hover:w-full"></span>
+                            </a>
+                            <a class="px-6 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300 font-medium" 
+                               href="{% url 'signup' %}">Sign Up</a>
                         {% endif %}
                     </div>
+                    
+                    <!-- User Section - Right Corner (Only for authenticated users) -->
+                    {% if user.is_authenticated %}
+                    <div class="hidden md:flex items-center space-x-4">
+                        <!-- User Info -->
+                        <div class="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-primary-50 to-secondary-50 rounded-full border border-primary-200">
+                            <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <span class="text-gray-800 font-semibold text-sm">
+                                {{ user.username }}
+                            </span>
+                        </div>
+                        
+                        <!-- Logout Button -->
+                        <form action="{% url 'logout' %}" method="post" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full font-medium transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
                     
                     <!-- Mobile menu button -->
                     <div class="md:hidden">
@@ -190,31 +212,85 @@
                     {% if user.is_authenticated %}
                     <a class="block text-gray-700 hover:text-primary-600 transition duration-300 font-medium" 
                        href="{% url 'ai_interviewer:user_interviews' %}">📊 Interview History</a>
+                    
+                    {% if user.role == 'employer' %}
+                        <a class="block text-gray-700 hover:text-primary-600 transition duration-300" href="{% url 'post_job' %}">Post Job</a>
+                        <a class="block text-gray-700 hover:text-primary-600 transition duration-300" href="{% url 'employer_dashboard' %}">Dashboard</a>
+                    {% else %}
+                        <a class="block text-gray-700 hover:text-primary-600 transition duration-300" href="{% url 'applicant_dashboard' %}">Dashboard</a>
                     {% endif %}
                     
-                    {% if user.is_authenticated %}
-                        <div class="border-t pt-4 space-y-4">
-                            <span class="block text-gray-800 font-semibold">Welcome, {{ user.username }}</span>
-                            {% if user.role == 'employer' %}
-                                <a class="block text-gray-700 hover:text-primary-600 transition duration-300" href="{% url 'post_job' %}">Post Job</a>
-                                <a class="block text-gray-700 hover:text-primary-600 transition duration-300" href="{% url 'employer_dashboard' %}">Dashboard</a>
-                            {% else %}
-                                <a class="block text-gray-700 hover:text-primary-600 transition duration-300" href="{% url 'applicant_dashboard' %}">Dashboard</a>
-                            {% endif %}
-                            <form action="{% url 'logout' %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="text-red-500 hover:text-red-700 transition duration-300">Logout</button>
-                            </form>
-                        </div>
+                    <div class="border-t pt-4 space-y-4">
+                        <span class="block text-gray-800 font-semibold">Welcome, {{ user.username }}</span>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-500 hover:text-red-700 transition duration-300">Logout</button>
+                        </form>
+                    </div>
                     {% else %}
-                        <div class="border-t pt-4 space-y-4">
-                            <a class="block text-gray-700 hover:text-primary-600 transition duration-300" href="{% url 'login' %}">Login</a>
-                            <a class="block text-center px-6 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-full" href="{% url 'signup' %}">Sign Up</a>
-                        </div>
+                    <!-- Login/Signup for non-authenticated users in mobile menu -->
+                    <a class="block text-gray-700 hover:text-primary-600 transition duration-300 font-medium" 
+                       href="{% url 'login' %}">Login</a>
+                    <a class="block text-center px-6 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-full" 
+                       href="{% url 'signup' %}">Sign Up</a>
                     {% endif %}
                 </div>
             </div>
         </nav>
+
+        <!-- Messages Display -->
+        {% if messages %}
+            <div class="fixed top-24 right-6 z-50 w-96 max-w-sm space-y-3">
+                {% for message in messages %}
+                    <div class="{% if message.tags == 'success' %}bg-green-500{% elif message.tags == 'error' %}bg-red-500{% elif message.tags == 'warning' %}bg-yellow-500{% else %}bg-blue-500{% endif %} bg-opacity-95 backdrop-blur-sm text-white p-4 rounded-xl shadow-2xl border border-white border-opacity-20 transform transition-all duration-500 ease-out animate-pulse"
+                         id="message-{{ forloop.counter }}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-start">
+                                {% if message.tags == 'success' %}
+                                    <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                {% elif message.tags == 'error' %}
+                                    <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                {% elif message.tags == 'warning' %}
+                                    <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                {% else %}
+                                    <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                {% endif %}
+                                <span class="text-sm font-medium leading-relaxed">{{ message }}</span>
+                            </div>
+                            <button onclick="this.parentElement.parentElement.remove()" class="ml-3 flex-shrink-0 text-white text-opacity-70 hover:text-opacity-100 transition-opacity duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Auto-dismiss messages after 6 seconds -->
+            <script>
+                setTimeout(function() {
+                    const messages = document.querySelectorAll('[id^="message-"]');
+                    messages.forEach(function(message) {
+                        message.style.opacity = '0';
+                        message.style.transform = 'translateX(100%)';
+                        setTimeout(function() {
+                            if (message.parentNode) {
+                                message.parentNode.removeChild(message);
+                            }
+                        }, 500);
+                    });
+                }, 6000);
+            </script>
+        {% endif %}
 
         <!-- Main Content -->
         <main class="flex-grow pt-20">
@@ -233,7 +309,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div class="md:col-span-2">
                         <h3 class="text-3xl font-bold mb-4 bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
-                            ✨ JobPortal
+                            ✨ AIpply
                         </h3>
                         <p class="text-gray-300 text-lg leading-relaxed">
                             Your premium destination for connecting top talent with exceptional opportunities. 
@@ -277,9 +353,13 @@
                 </div>
                 
                 <div class="mt-12 pt-8 border-t border-gray-700 text-center">
-                    <p class="text-gray-400">
-                        &copy; 2025 JobPortal. All rights reserved. Built with ❤️ for the future of work.
-                    </p>
+                 <p class="text-gray-400">
+                    &copy; 2025 AIpply. All rights reserved. Created by 
+                      <a href="https://www.linkedin.com/in/shakilahamedriaz/" target="_blank" class="text-blue-400 hover:underline">
+                      Shakil Ahamed Riaz
+                      </a>.
+                </p>
+
                 </div>
             </div>
         </footer>
