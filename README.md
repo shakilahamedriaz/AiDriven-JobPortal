@@ -2,6 +2,12 @@
 
 ![Project Banner](https://user-images.githubusercontent.com/73512833/212261623-3b41399a-e8f0-4c31-897b-9524e782803b.png)
 <p align="center">
+  <a href="http://34.170.252.94/" target="_blank">
+    <img src="https://img.shields.io/badge/Live_Demo-Visit_Site-brightgreen?style=for-the-badge&logo=google-cloud" alt="Live Demo">
+  </a>
+</p>
+
+<p align="center">
   <img alt="Python" src="https://img.shields.io/badge/python-3.9+-blue.svg">
   <img alt="Django" src="https://img.shields.io/badge/django-4.x-green.svg">
   <img alt="License" src="https://img.shields.io/badge/License-MIT-yellow.svg">
@@ -18,7 +24,7 @@
 
 - [About The Project](#-about-the-project)
 - [🌟 Core Features](#-core-features)
-- [🖼️ Screenshots](#-screenshots)
+- [🖼️ Project Gallery](#-project-gallery)
 - [🛠️ Tech Stack](#-tech-stack)
 - [🚦 Getting Started](#-getting-started)
 - [📝 How It Works](#-how-it-works)
@@ -55,13 +61,14 @@ Applicants can not only search for jobs using advanced filters but also practice
 
 ---
 
-## 🖼️ Screenshots
+## 🖼️ Project Gallery
 
-| Home Page | AI Interview Session | Job Listings |
+| Home Page | Job Listings | AI Interview Session |
 | :---: | :---: | :---: |
-| ![image1](image1) | ![image2](image2) | ![image4](image4) |
-| **Applicant Dashboard** | **Employer Dashboard** | **Interview History** |
-| ![image5](image5) | *(Add Employer Dashboard Screenshot)* | ![image6](image6) |
+| ![Home Page](image/homepage.jpg) | ![Job Listings Page](image/homepage2.jpg) | ![AI Interview Session](image/interviewsession.jpg) |
+| **Employer Dashboard** | **Applicant Dashboard** | **Interview History** |
+| ![Employer Dashboard](image/employeedashboard.jpg) | ![Applicant Dashboard](image/applicantdashboard.jpg) | ![Interview History](image/interviewhistory.jpg) |
+
 
 ---
 
@@ -72,7 +79,7 @@ Applicants can not only search for jobs using advanced filters but also practice
 - **AI Integration**: OpenAI GPT API (or your chosen provider)
 - **Voice Features**: Web Speech API (Text-to-Speech & Speech Recognition)
 - **Database**: PostgreSQL (Production), SQLite3 (Development)
-- **Deployment**: Docker, Gunicorn, Nginx (Configuration included)
+- **Deployment**: Google Cloud, Docker, Gunicorn, Nginx
 
 ---
 
