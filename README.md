@@ -1,6 +1,6 @@
 # 🚀 AIpply – The AI-Powered Job Portal
 
-![Project Banner](https://user-images.githubusercontent.com/73512833/212261623-3b41399a-e8f0-4c31-897b-9524e782803b.png)
+![Project Banner](image/homepage.jpg)
 <p align="center">
   <a href="http://34.170.252.94/" target="_blank">
     <img src="https://img.shields.io/badge/Live_Demo-Visit_Site-brightgreen?style=for-the-badge&logo=google-cloud" alt="Live Demo">
@@ -76,7 +76,7 @@ Applicants can not only search for jobs using advanced filters but also practice
 
 - **Backend**: Django, Django REST Framework
 - **Frontend**: Tailwind CSS, Alpine.js, HTML5
-- **AI Integration**: OpenAI GPT API (or your chosen provider)
+- **AI Integration**: Groq - meta-llama/llama-4-scout-17b-16e-instruct
 - **Voice Features**: Web Speech API (Text-to-Speech & Speech Recognition)
 - **Database**: PostgreSQL (Production), SQLite3 (Development)
 - **Deployment**: Google Cloud, Docker, Gunicorn, Nginx
@@ -97,7 +97,7 @@ Follow these instructions to get a local copy up and running for development and
 
 1.  **Clone the repository**
     ```bash
-    git clone [https://github.com/yourusername/aipply.git](https://github.com/yourusername/aipply.git)
+    git clone [https://github.com/shakilahamedriaz/AiDriven-JobPortal.git)
     cd aipply
     ```
 
